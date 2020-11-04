@@ -6,13 +6,16 @@ import NavigationBar from './components/NavigationBar'
 import Auth from './components/Auth'
 
 const GlobalStyle = createGlobalStyle`
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
   body {
     margin: 0;
   }
 
   img {
     user-select: none;
-    -webkit-tap-highlight-color: transparent;
   }
 
   a {

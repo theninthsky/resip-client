@@ -2,6 +2,26 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
+import If from '../If'
+import {
+  REGISTER,
+  LOGIN,
+  USERNAME,
+  NAME,
+  DEFAULT_GENDER,
+  SELECT_GENDER,
+  MALE,
+  FEMALE,
+  NOT_SPECIFIED,
+  MIN_DATE,
+  EMAIL,
+  PASSWORD,
+  CONFIRM_PASSWORD,
+  SUBMIT,
+  ALREADY_A_MEMBER,
+  NOT_A_MEMBER
+} from './constants'
+
 import { $black_text, $mobile } from '../../styles'
 import wallpaper from '../../images/wallpaper.jpg'
 
@@ -19,7 +39,7 @@ const Modal = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   width: 400px;
-  height: 400px;
+  height: ${({ mode }) => (mode === LOGIN ? '400px' : '600px')};
   border-radius: 8px;
   background-color: rgba(255, 255, 255, 0.55);
   backdrop-filter: blur(20px);
@@ -38,7 +58,7 @@ const Form = styled.form`
   margin-top: 60px;
 `
 const FieldsWrap = styled.div`
-  height: 85px;
+  height: ${({ mode }) => (mode === LOGIN ? '90px' : '300px')};
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -85,11 +105,29 @@ const FieldPlaceholder = styled.span`
   background-color: ${({ value }) => (value ? 'white' : 'auto')};
   transition: ease-in-out 0.2s all;
 `
+const Dropdowns = styled.div`
+  display: flex;
+  justify-content: space-around;
+  padding: 0 50px;
+`
+const Gender = styled.select`
+  width: 110px;
+  padding: 7.5px 2.5px;
+  border: 1px solid lightgray;
+  border-radius: 5px;
+`
+const BirthDate = styled.input`
+  width: 125px;
+  padding: 7.5px 2.5px;
+  border: 1px solid lightgray;
+  border-radius: 5px;
+`
 const Submit = styled.input`
   display: block;
   width: 60px;
   height: 30px;
-  margin: 80px auto 0 auto;
+  margin: 0 auto;
+  margin-top: 50px;
   border: 1px solid ${$black_text};
   border-radius: 5px;
   outline: none;
@@ -101,37 +139,89 @@ const Submit = styled.input`
   }
 `
 const RegisterLink = styled(Link)`
-  display: block;
-  margin-top: 25px;
-  padding-right: 15px;
-  text-align: right;
+  position: absolute;
+  bottom: 25px;
+  right: 25px;
   color: ${$black_text};
+
+  &:hover {
+    opacity: 0.75;
+  }
 `
 
 const Auth = ({ history, location }) => {
-  const [path, setPath] = useState()
+  const [mode, setMode] = useState() // Login | Register
+  const [username, setUsername] = useState('')
+  const [name, setName] = useState('')
+  const [gender, setGender] = useState(DEFAULT_GENDER)
+  const [birthDate, setBirthDate] = useState(MIN_DATE)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
 
   useEffect(() => {
     const pathname = location.pathname.replace('/', '')
 
-    setPath(`${pathname[0].toUpperCase()}${pathname.slice(1)}`)
-  }, [location.pathname, setPath])
+    setMode(`${pathname[0].toUpperCase()}${pathname.slice(1)}`)
+  }, [location.pathname, setMode])
 
   return (
     <>
       <Backdrop />
 
-      <Modal>
-        <Title>{path}</Title>
+      <Modal mode={mode}>
+        <Title>{mode}</Title>
 
-        <Form>
-          <FieldsWrap>
+        <Form
+          onSubmit={e => {
+            e.preventDefault()
+            console.log(username, name, gender, birthDate, email, password, confirmPassword)
+          }}
+        >
+          <FieldsWrap mode={mode}>
+            <If condition={mode === REGISTER}>
+              <Field>
+                <FieldLabel>
+                  <FieldInput
+                    type="text"
+                    name="username"
+                    required
+                    value={username}
+                    onChange={e => setUsername(e.target.value)}
+                  />
+                  <FieldPlaceholder value={username}>{USERNAME}</FieldPlaceholder>
+                </FieldLabel>
+              </Field>
+              <Field>
+                <FieldLabel>
+                  <FieldInput type="text" name="name" required value={name} onChange={e => setName(e.target.value)} />
+                  <FieldPlaceholder value={name}>{NAME}</FieldPlaceholder>
+                </FieldLabel>
+              </Field>
+
+              <Dropdowns>
+                <Gender value={gender} required onChange={e => setGender(e.target.value)}>
+                  <option value="" disabled>
+                    {SELECT_GENDER}
+                  </option>
+                  <option value="male">{MALE}</option>
+                  <option value="female">{FEMALE}</option>
+                  <option value="not-specified">{NOT_SPECIFIED}</option>
+                </Gender>
+
+                <BirthDate
+                  type="date"
+                  max={new Date().toISOString().slice(0, 10)}
+                  value={birthDate}
+                  onChange={e => setBirthDate(e.target.value)}
+                />
+              </Dropdowns>
+            </If>
+
             <Field>
               <FieldLabel>
                 <FieldInput type="email" name="email" required value={email} onChange={e => setEmail(e.target.value)} />
-                <FieldPlaceholder value={email}>Email</FieldPlaceholder>
+                <FieldPlaceholder value={email}>{EMAIL}</FieldPlaceholder>
               </FieldLabel>
             </Field>
             <Field>
@@ -143,24 +233,32 @@ const Auth = ({ history, location }) => {
                   required
                   onChange={e => setPassword(e.target.value)}
                 />
-                <FieldPlaceholder value={password}>Password</FieldPlaceholder>
+                <FieldPlaceholder value={password}>{PASSWORD}</FieldPlaceholder>
               </FieldLabel>
             </Field>
+
+            <If condition={mode === 'Register'}>
+              <Field>
+                <FieldLabel>
+                  <FieldInput
+                    type="password"
+                    name="confirm-password"
+                    value={confirmPassword}
+                    required
+                    onChange={e => setConfirmPassword(e.target.value)}
+                  />
+                  <FieldPlaceholder value={confirmPassword}>{CONFIRM_PASSWORD}</FieldPlaceholder>
+                </FieldLabel>
+              </Field>
+            </If>
           </FieldsWrap>
 
-          <Submit
-            type="submit"
-            value="Submit"
-            onClick={e => {
-              e.preventDefault()
-              history.replace('/lol')
-            }}
-          />
+          <Submit mode={mode} type="submit" value={SUBMIT} />
         </Form>
 
-        <RegisterLink to={path === 'Login' ? '/register' : '/login'}>{`${
-          path === 'Login' ? 'Not' : 'Already'
-        } a memeber?`}</RegisterLink>
+        <RegisterLink to={mode === LOGIN ? '/register' : '/login'}>
+          {mode === LOGIN ? NOT_A_MEMBER : ALREADY_A_MEMBER}
+        </RegisterLink>
       </Modal>
     </>
   )
