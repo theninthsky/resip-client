@@ -1,11 +1,16 @@
 import React from 'react'
 import { createGlobalStyle } from 'styled-components'
 
-import NavigationBar from './components/NavigationBar'
+// import NavigationBar from './components/NavigationBar'
+import Auth from './components/Auth'
+
+import wallpaper from './images/wallpaper.jpg'
 
 const GlobalStyle = createGlobalStyle`
   body {
     margin: 0;
+    background: url(${wallpaper}) no-repeat fixed;
+    background-size: cover;
   }
 
   img {
@@ -24,7 +29,8 @@ const App = () => {
   return (
     <>
       <GlobalStyle />
-      <NavigationBar />
+      {/* <NavigationBar /> */}
+      <Auth />
     </>
   )
 }
