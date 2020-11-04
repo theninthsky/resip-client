@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import styled from 'styled-components'
 
+import { $black_text } from '../../styles'
+
 const Modal = styled.div`
   position: absolute;
   top: 50%;
@@ -16,7 +18,7 @@ const Title = styled.div`
   margin-top: 40px;
   text-align: center;
   font-size: 36px;
-  color: rgb(80, 80, 80);
+  color: ${$black_text};
 `
 const Form = styled.form`
   margin-top: 60px;
@@ -47,14 +49,14 @@ const FieldInput = styled.input`
 
   &:focus {
     outline: none;
-    border: 1px solid rgb(80, 80, 80);
+    border: 1px solid ${$black_text};
   }
 
   &:focus ~ span {
     top: -8px;
     left: 8px;
     font-size: 14px;
-    color: rgb(80, 80, 80);
+    color: ${$black_text};
     background-color: white;
   }
 `
@@ -65,7 +67,7 @@ const FieldPlaceholder = styled.span`
   left: ${({ value }) => (value ? '8px' : '12px')};
   padding: 0 2.5px;
   font-size: ${({ value }) => (value ? '14px' : 'auto')};
-  color: ${({ value }) => (value ? 'rgb(80, 80, 80)' : '#a9a9a9')};
+  color: ${({ value }) => (value ? $black_text : '#a9a9a9')};
   background-color: ${({ value }) => (value ? 'white' : 'auto')};
   transition: ease-in-out 0.2s all;
 `
@@ -74,7 +76,7 @@ const Submit = styled.input`
   width: 60px;
   height: 30px;
   margin: 90px auto 0 auto;
-  border: 1px solid rgb(80, 80, 80);
+  border: 1px solid ${$black_text};
   border-radius: 5px;
   outline: none;
   background-color: rgba(255, 255, 255, 0.25);
@@ -115,7 +117,7 @@ const Auth = () => {
           </Field>
         </FieldsWrap>
 
-        <Submit type="submit" />
+        <Submit type="submit" value="Submit" />
       </Form>
     </Modal>
   )

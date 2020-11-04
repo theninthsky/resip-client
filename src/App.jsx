@@ -1,4 +1,5 @@
 import React from 'react'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
 
 // import NavigationBar from './components/NavigationBar'
@@ -27,11 +28,13 @@ const GlobalStyle = createGlobalStyle`
 
 const App = () => {
   return (
-    <>
+    <Router>
       <GlobalStyle />
       {/* <NavigationBar /> */}
-      <Auth />
-    </>
+      <Route path="/login">
+        <Auth />
+      </Route>
+    </Router>
   )
 }
 
