@@ -2,12 +2,11 @@ import styled from 'styled-components'
 
 const Wrapper = styled.nav`
   height: 50px;
-  background-color: rebeccapurple;
+  background-color: #fdffe8;
 `
 
 const Logo = styled.div`
   font-size: 26px;
-  color: white;
 `
 
 const NavigationBar = () => {

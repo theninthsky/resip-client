@@ -1,17 +1,13 @@
 import React from 'react'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
 
-// import NavigationBar from './components/NavigationBar'
+import NavigationBar from './components/NavigationBar'
 import Auth from './components/Auth'
-
-import wallpaper from './images/wallpaper.jpg'
 
 const GlobalStyle = createGlobalStyle`
   body {
     margin: 0;
-    background: url(${wallpaper}) no-repeat fixed;
-    background-size: cover;
   }
 
   img {
@@ -30,10 +26,11 @@ const App = () => {
   return (
     <Router>
       <GlobalStyle />
-      {/* <NavigationBar /> */}
-      <Route path="/login">
-        <Auth />
-      </Route>
+
+      <Switch>
+        <Route exact path={['/', '/login']} component={Auth} />
+        <NavigationBar />
+      </Switch>
     </Router>
   )
 }

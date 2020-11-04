@@ -1,7 +1,16 @@
 import { useState } from 'react'
 import styled from 'styled-components'
 
-import { $black_text } from '../../styles'
+import { $black_text, $mobile } from '../../styles'
+import wallpaper from '../../images/wallpaper.jpg'
+
+const Backdrop = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: url(${wallpaper}) no-repeat fixed;
+  background-size: cover;
+`
 
 const Modal = styled.div`
   position: absolute;
@@ -13,6 +22,10 @@ const Modal = styled.div`
   border-radius: 8px;
   background-color: rgba(255, 255, 255, 0.55);
   backdrop-filter: blur(20px);
+
+  @media (${$mobile}) {
+    max-width: 90%;
+  }
 `
 const Title = styled.div`
   margin-top: 40px;
@@ -87,39 +100,50 @@ const Submit = styled.input`
   }
 `
 
-const Auth = () => {
+const Auth = ({ history }) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
   return (
-    <Modal>
-      <Title>Login</Title>
+    <>
+      <Backdrop />
 
-      <Form>
-        <FieldsWrap>
-          <Field>
-            <FieldLabel>
-              <FieldInput type="email" name="email" required value={email} onChange={e => setEmail(e.target.value)} />
-              <FieldPlaceholder value={email}>Email</FieldPlaceholder>
-            </FieldLabel>
-          </Field>
-          <Field>
-            <FieldLabel>
-              <FieldInput
-                type="password"
-                name="password"
-                value={password}
-                required
-                onChange={e => setPassword(e.target.value)}
-              />
-              <FieldPlaceholder value={password}>Password</FieldPlaceholder>
-            </FieldLabel>
-          </Field>
-        </FieldsWrap>
+      <Modal>
+        <Title>Login</Title>
 
-        <Submit type="submit" value="Submit" />
-      </Form>
-    </Modal>
+        <Form>
+          <FieldsWrap>
+            <Field>
+              <FieldLabel>
+                <FieldInput type="email" name="email" required value={email} onChange={e => setEmail(e.target.value)} />
+                <FieldPlaceholder value={email}>Email</FieldPlaceholder>
+              </FieldLabel>
+            </Field>
+            <Field>
+              <FieldLabel>
+                <FieldInput
+                  type="password"
+                  name="password"
+                  value={password}
+                  required
+                  onChange={e => setPassword(e.target.value)}
+                />
+                <FieldPlaceholder value={password}>Password</FieldPlaceholder>
+              </FieldLabel>
+            </Field>
+          </FieldsWrap>
+
+          <Submit
+            type="submit"
+            value="Submit"
+            onClick={e => {
+              e.preventDefault()
+              history.replace('/lol')
+            }}
+          />
+        </Form>
+      </Modal>
+    </>
   )
 }
 
