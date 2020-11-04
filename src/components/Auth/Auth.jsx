@@ -115,12 +115,14 @@ const Gender = styled.select`
   padding: 7.5px 2.5px;
   border: 1px solid lightgray;
   border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.66);
 `
 const BirthDate = styled.input`
   width: 125px;
   padding: 7.5px 2.5px;
   border: 1px solid lightgray;
   border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.66);
 `
 const Submit = styled.input`
   display: block;
