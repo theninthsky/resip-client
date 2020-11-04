@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { $black_text, $mobile } from '../../styles'
@@ -88,7 +89,7 @@ const Submit = styled.input`
   display: block;
   width: 60px;
   height: 30px;
-  margin: 90px auto 0 auto;
+  margin: 80px auto 0 auto;
   border: 1px solid ${$black_text};
   border-radius: 5px;
   outline: none;
@@ -99,17 +100,31 @@ const Submit = styled.input`
     opacity: 0.75;
   }
 `
+const RegisterLink = styled(Link)`
+  display: block;
+  margin-top: 25px;
+  padding-right: 15px;
+  text-align: right;
+  color: ${$black_text};
+`
 
-const Auth = ({ history }) => {
+const Auth = ({ history, location }) => {
+  const [path, setPath] = useState()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+
+  useEffect(() => {
+    const pathname = location.pathname.replace('/', '')
+
+    setPath(`${pathname[0].toUpperCase()}${pathname.slice(1)}`)
+  }, [location.pathname, setPath])
 
   return (
     <>
       <Backdrop />
 
       <Modal>
-        <Title>Login</Title>
+        <Title>{path}</Title>
 
         <Form>
           <FieldsWrap>
@@ -142,6 +157,10 @@ const Auth = ({ history }) => {
             }}
           />
         </Form>
+
+        <RegisterLink to={path === 'Login' ? '/register' : '/login'}>{`${
+          path === 'Login' ? 'Not' : 'Already'
+        } a memeber?`}</RegisterLink>
       </Modal>
     </>
   )
