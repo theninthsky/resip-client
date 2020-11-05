@@ -23,7 +23,7 @@ import {
   NOT_A_MEMBER
 } from './constants'
 
-import { $black_text, $mobile } from '../../styles'
+import { $mobile, $tablet, $black_text } from '../../styles'
 import wallpaper from '../../images/wallpaper.jpg'
 
 const Backdrop = styled.div`
@@ -45,7 +45,7 @@ const Modal = styled.div`
   background-color: rgba(255, 255, 255, 0.55);
   backdrop-filter: blur(20px);
 
-  @media (${$mobile}) {
+  @media ${$mobile} {
     max-width: 90%;
   }
 `
@@ -157,6 +157,12 @@ const RegisterLink = styled(Link)`
   &:hover {
     opacity: 0.75;
   }
+
+  @media ${$mobile}, ${$tablet} {
+    &:hover {
+      opacity: 1;
+    }
+  }
 `
 
 const Auth = ({ history, location }) => {
@@ -235,6 +241,7 @@ const Auth = ({ history, location }) => {
                   type="date"
                   max={new Date().toISOString().slice(0, 10)}
                   value={birthDate}
+                  required
                   onChange={e => setBirthDate(e.target.value)}
                 />
               </Dropdowns>
