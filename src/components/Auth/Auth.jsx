@@ -16,6 +16,7 @@ import {
   MIN_DATE,
   EMAIL,
   PASSWORD,
+  PASSWORD_TOOLTIP,
   CONFIRM_PASSWORD,
   SUBMIT,
   ALREADY_A_MEMBER,
@@ -75,9 +76,10 @@ const FieldInput = styled.input`
   position: relative;
   margin: 0 auto;
   padding: 10px 15px;
-  border: 1px solid lightgray;
+  border: ${({ passwordsMatch = true }) => `1px solid ${passwordsMatch ? 'lightgray' : 'red'}`};
   border-radius: 5px;
   box-shadow: none;
+  color: ${({ passwordsMatch = true }) => (passwordsMatch ? 'auto' : 'red')};
   background-color: rgba(255, 255, 255, 0.66);
   transition: ease-in-out 0.2s all;
 
@@ -101,7 +103,7 @@ const FieldPlaceholder = styled.span`
   left: ${({ value }) => (value ? '8px' : '12px')};
   padding: 0 2.5px;
   font-size: ${({ value }) => (value ? '14px' : 'auto')};
-  color: ${({ value }) => (value ? $black_text : '#a9a9a9')};
+  color: ${({ value, passwordsMatch = true }) => (value ? (passwordsMatch ? $black_text : 'red') : '#a9a9a9')};
   background-color: ${({ value }) => (value ? 'white' : 'auto')};
   transition: ease-in-out 0.2s all;
 `
@@ -137,6 +139,7 @@ const Submit = styled.input`
   border: 1px solid ${$black_text};
   border-radius: 5px;
   outline: none;
+  color: ${$black_text};
   background-color: rgba(255, 255, 255, 0.25);
   cursor: pointer;
 
@@ -165,12 +168,19 @@ const Auth = ({ history, location }) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [passwordsMatch, setPasswordsMatch] = useState(true)
 
   useEffect(() => {
     const pathname = location.pathname.replace('/', '')
 
     setMode(`${pathname[0].toUpperCase()}${pathname.slice(1)}`)
   }, [location.pathname, setMode])
+
+  const submitForm = e => {
+    e.preventDefault()
+    if (!passwordsMatch) return alert('Passwords do not match.')
+    console.log(username, name, gender, birthDate, email, password, confirmPassword)
+  }
 
   return (
     <>
@@ -179,12 +189,7 @@ const Auth = ({ history, location }) => {
       <Modal mode={mode}>
         <Title>{mode}</Title>
 
-        <Form
-          onSubmit={e => {
-            e.preventDefault()
-            console.log(username, name, gender, birthDate, email, password, confirmPassword)
-          }}
-        >
+        <Form onSubmit={submitForm}>
           <FieldsWrap mode={mode}>
             <If condition={mode === REGISTER}>
               <Field>
@@ -192,6 +197,8 @@ const Auth = ({ history, location }) => {
                   <FieldInput
                     type="text"
                     name="username"
+                    minLength="2"
+                    maxLength="32"
                     required
                     value={username}
                     onChange={e => setUsername(e.target.value)}
@@ -201,7 +208,15 @@ const Auth = ({ history, location }) => {
               </Field>
               <Field>
                 <FieldLabel>
-                  <FieldInput type="text" name="name" required value={name} onChange={e => setName(e.target.value)} />
+                  <FieldInput
+                    type="text"
+                    name="name"
+                    minLength="2"
+                    maxLength="64"
+                    required
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                  />
                   <FieldPlaceholder value={name}>{NAME}</FieldPlaceholder>
                 </FieldLabel>
               </Field>
@@ -236,6 +251,9 @@ const Auth = ({ history, location }) => {
                 <FieldInput
                   type="password"
                   name="password"
+                  minLength="8"
+                  maxLength="512"
+                  title={PASSWORD_TOOLTIP}
                   value={password}
                   required
                   onChange={e => setPassword(e.target.value)}
@@ -244,17 +262,22 @@ const Auth = ({ history, location }) => {
               </FieldLabel>
             </Field>
 
-            <If condition={mode === 'Register'}>
+            <If condition={mode === REGISTER}>
               <Field>
                 <FieldLabel>
                   <FieldInput
+                    passwordsMatch={passwordsMatch}
                     type="password"
                     name="confirm-password"
                     value={confirmPassword}
                     required
                     onChange={e => setConfirmPassword(e.target.value)}
+                    onFocus={() => setPasswordsMatch(true)}
+                    onBlur={() => setPasswordsMatch(password === confirmPassword)}
                   />
-                  <FieldPlaceholder value={confirmPassword}>{CONFIRM_PASSWORD}</FieldPlaceholder>
+                  <FieldPlaceholder value={confirmPassword} passwordsMatch={passwordsMatch}>
+                    {CONFIRM_PASSWORD}
+                  </FieldPlaceholder>
                 </FieldLabel>
               </Field>
             </If>

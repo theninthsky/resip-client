@@ -17,12 +17,6 @@ const GlobalStyle = createGlobalStyle`
   img {
     user-select: none;
   }
-
-  a {
-    &:visited {
-      color: unset;
-    }
-  }
 `
 
 const App = () => {
