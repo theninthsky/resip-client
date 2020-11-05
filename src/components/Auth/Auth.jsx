@@ -125,6 +125,7 @@ const Gender = styled.select`
   border-radius: 5px;
   outline: none;
   background-color: rgba(255, 255, 255, 0.66);
+  cursor: pointer;
 `
 const BirthDate = styled.input`
   padding: 7.5px 2.5px;
@@ -132,6 +133,10 @@ const BirthDate = styled.input`
   border-radius: 5px;
   outline: none;
   background-color: rgba(255, 255, 255, 0.66);
+
+  &::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+  }
 `
 const Submit = styled.input`
   display: block;
