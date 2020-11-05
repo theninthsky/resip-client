@@ -39,7 +39,7 @@ const Modal = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   width: 400px;
-  height: ${({ mode }) => (mode === LOGIN ? '400px' : '600px')};
+  height: ${({ mode }) => (mode === LOGIN ? '360px' : '560px')};
   border-radius: 8px;
   background-color: rgba(255, 255, 255, 0.55);
   backdrop-filter: blur(20px);
@@ -55,7 +55,7 @@ const Title = styled.div`
   color: ${$black_text};
 `
 const Form = styled.form`
-  margin-top: 60px;
+  margin-top: 40px;
 `
 const FieldsWrap = styled.div`
   height: ${({ mode }) => (mode === LOGIN ? '90px' : '300px')};
@@ -109,19 +109,23 @@ const Dropdowns = styled.div`
   display: flex;
   justify-content: space-around;
   padding: 0 50px;
+
+  @media (max-width: 400px) {
+    padding: 0 10px;
+  }
 `
 const Gender = styled.select`
-  width: 110px;
   padding: 7.5px 2.5px;
   border: 1px solid lightgray;
   border-radius: 5px;
+  outline: none;
   background-color: rgba(255, 255, 255, 0.66);
 `
 const BirthDate = styled.input`
-  width: 125px;
   padding: 7.5px 2.5px;
   border: 1px solid lightgray;
   border-radius: 5px;
+  outline: none;
   background-color: rgba(255, 255, 255, 0.66);
 `
 const Submit = styled.input`
@@ -129,7 +133,7 @@ const Submit = styled.input`
   width: 60px;
   height: 30px;
   margin: 0 auto;
-  margin-top: 50px;
+  margin-top: 40px;
   border: 1px solid ${$black_text};
   border-radius: 5px;
   outline: none;
@@ -144,6 +148,7 @@ const RegisterLink = styled(Link)`
   position: absolute;
   bottom: 25px;
   right: 25px;
+  text-decoration: none;
   color: ${$black_text};
 
   &:hover {
