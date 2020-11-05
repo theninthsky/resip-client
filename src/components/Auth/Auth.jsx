@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 import If from '../If'
+import { useProgressiveImg } from '../../hooks'
 import {
   REGISTER,
   LOGIN,
@@ -24,14 +25,16 @@ import {
 } from './constants'
 
 import { $mobile, $tablet, $black_text } from '../../styles'
-import wallpaper from '../../images/wallpaper.jpg'
+import wallpaperLQ from '../../images/wallpaper-lq.jpg'
+import wallpaperHQ from '../../images/wallpaper-hq.jpg'
 
 const Backdrop = styled.div`
   position: absolute;
   width: 100%;
   height: 100%;
-  background: url(${wallpaper}) no-repeat fixed;
+  background: ${({ wallpaperSrc }) => `url(${wallpaperSrc}) no-repeat fixed`};
   background-size: cover;
+  filter: ${({ shouldBlur }) => (shouldBlur ? 'blur(10px)' : 'none')};
 `
 
 const Modal = styled.div`
@@ -166,6 +169,8 @@ const RegisterLink = styled(Link)`
 `
 
 const Auth = ({ history, location }) => {
+  const [wallpaperSrc, shouldBlur] = useProgressiveImg(wallpaperLQ, wallpaperHQ)
+
   const [mode, setMode] = useState() // Login | Register
   const [username, setUsername] = useState('')
   const [name, setName] = useState('')
@@ -190,7 +195,7 @@ const Auth = ({ history, location }) => {
 
   return (
     <>
-      <Backdrop />
+      <Backdrop wallpaperSrc={wallpaperSrc} shouldBlur={shouldBlur} />
 
       <Modal mode={mode}>
         <Title>{mode}</Title>
