@@ -38,12 +38,10 @@ const Backdrop = styled.div`
 `
 
 const Modal = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   width: 400px;
   height: ${({ mode }) => (mode === LOGIN ? '360px' : '560px')};
+  margin: ${({ mode }) => `max(calc((100vh - ${mode === LOGIN ? '360px' : '560px'}) / 2), 4px) auto`};
+  overflow: auto;
   border-radius: 8px;
   background-color: rgba(255, 255, 255, 0.55);
   backdrop-filter: blur(20px);
@@ -52,10 +50,11 @@ const Modal = styled.div`
     max-width: 90%;
   }
 `
-const Title = styled.div`
-  margin-top: 40px;
+const Title = styled.h1`
+  margin-top: 25px;
   text-align: center;
   font-size: 36px;
+  font-weight: normal;
   color: ${$black_text};
 `
 const Form = styled.form`

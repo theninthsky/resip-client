@@ -17,6 +17,10 @@ const GlobalStyle = createGlobalStyle`
   img {
     user-select: none;
   }
+
+  #root {
+    overflow: auto;
+  }
 `
 
 const App = () => {
