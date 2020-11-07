@@ -4,6 +4,10 @@ import { createGlobalStyle } from 'styled-components'
 
 import NavigationBar from './components/NavigationBar'
 import Auth from './components/Auth'
+import { useProgressiveImg } from './hooks'
+
+import wallpaperLQ from './images/wallpaper-lq.jpg'
+import wallpaperHQ from './images/wallpaper-hq.jpg'
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -12,6 +16,8 @@ const GlobalStyle = createGlobalStyle`
 
   body {
     margin: 0;
+    background: ${({ wallpaperSrc }) => `url(${wallpaperSrc}) no-repeat fixed`};
+    background-size: cover;
   }
 
   img {
@@ -24,9 +30,11 @@ const GlobalStyle = createGlobalStyle`
 `
 
 const App = () => {
+  const wallpaperSrc = useProgressiveImg(wallpaperLQ, wallpaperHQ)
+
   return (
     <Router>
-      <GlobalStyle />
+      <GlobalStyle wallpaperSrc={wallpaperSrc} />
 
       <Switch>
         <Route exact path="/" component={() => <Redirect to="/login" />} />
