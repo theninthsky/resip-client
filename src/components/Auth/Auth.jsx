@@ -23,28 +23,25 @@ import {
   NOT_A_MEMBER
 } from './constants'
 
-import { $mobile, $tablet, $black_text } from '../../styles'
+import { MOBILE_LANDSCAPE, BLACK_TEXT, DESKTOP } from '../../style'
 
 const Modal = styled.div`
   position: relative;
   width: 400px;
+  max-width: 90%;
   height: ${({ mode }) => (mode === LOGIN ? '360px' : '560px')};
   margin: ${({ mode }) => `max(calc((100vh - ${mode === LOGIN ? '360px' : '560px'}) / 2), 25px) auto`};
   overflow: auto;
   border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.55);
+  background-color: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(20px);
-
-  @media ${$mobile} {
-    max-width: 90%;
-  }
 `
 const Title = styled.h1`
   margin-top: 25px;
   text-align: center;
   font-size: 36px;
   font-weight: normal;
-  color: ${$black_text};
+  color: ${BLACK_TEXT};
 `
 const Form = styled.form`
   margin-top: 40px;
@@ -76,14 +73,14 @@ const FieldInput = styled.input`
 
   &:focus {
     outline: none;
-    border: 1px solid ${$black_text};
+    border: 1px solid ${BLACK_TEXT};
   }
 
   &:focus ~ span {
     top: -8px;
     left: 8px;
     font-size: 14px;
-    color: ${$black_text};
+    color: ${BLACK_TEXT};
     background-color: white;
   }
 `
@@ -94,17 +91,17 @@ const FieldPlaceholder = styled.span`
   left: ${({ value }) => (value ? '8px' : '12px')};
   padding: 0 2.5px;
   font-size: ${({ value }) => (value ? '14px' : 'auto')};
-  color: ${({ value, passwordsMatch = true }) => (value ? (passwordsMatch ? $black_text : 'red') : '#a9a9a9')};
+  color: ${({ value, passwordsMatch = true }) => (value ? (passwordsMatch ? BLACK_TEXT : 'red') : '#a9a9a9')};
   background-color: ${({ value }) => (value ? 'white' : 'auto')};
   transition: ease-in-out 0.2s all;
 `
 const Dropdowns = styled.div`
   display: flex;
   justify-content: space-around;
-  padding: 0 50px;
+  padding: 0 10px;
 
-  @media (max-width: 400px) {
-    padding: 0 10px;
+  @media ${MOBILE_LANDSCAPE} {
+    padding: 0 50px;
   }
 `
 const Gender = styled.select`
@@ -132,15 +129,17 @@ const Submit = styled.input`
   height: 30px;
   margin: 0 auto;
   margin-top: 40px;
-  border: 1px solid ${$black_text};
+  border: 1px solid ${BLACK_TEXT};
   border-radius: 5px;
   outline: none;
-  color: ${$black_text};
+  color: ${BLACK_TEXT};
   background-color: rgba(255, 255, 255, 0.25);
   cursor: pointer;
 
-  &:hover {
-    opacity: 0.75;
+  @media ${DESKTOP} {
+    &:hover {
+      opacity: 0.75;
+    }
   }
 `
 const RegisterLink = styled(Link)`
@@ -148,15 +147,11 @@ const RegisterLink = styled(Link)`
   bottom: 25px;
   right: 25px;
   text-decoration: none;
-  color: ${$black_text};
+  color: ${BLACK_TEXT};
 
-  &:hover {
-    opacity: 0.75;
-  }
-
-  @media ${$mobile}, ${$tablet} {
+  @media ${DESKTOP} {
     &:hover {
-      opacity: 1;
+      opacity: 0.75;
     }
   }
 `
@@ -176,6 +171,8 @@ const Auth = ({ history, location }) => {
     const pathname = location.pathname.replace('/', '')
 
     setMode(`${pathname[0].toUpperCase()}${pathname.slice(1)}`)
+
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [location.pathname, setMode])
 
   const submitForm = e => {

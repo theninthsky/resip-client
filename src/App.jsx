@@ -1,5 +1,4 @@
-import React from 'react'
-import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
+import { Switch, Route, Redirect, useLocation } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
 
 import NavigationBar from './components/NavigationBar'
@@ -30,18 +29,19 @@ const GlobalStyle = createGlobalStyle`
 `
 
 const App = () => {
-  const wallpaperSrc = useProgressiveImg(wallpaperLQ, wallpaperHQ)
+  const { pathname } = useLocation()
+  const [wallpaperSrc] = useProgressiveImg(wallpaperLQ, wallpaperHQ)
 
   return (
-    <Router>
-      <GlobalStyle wallpaperSrc={wallpaperSrc} />
+    <>
+      <GlobalStyle wallpaperSrc={pathname === '/login' || pathname === '/register' ? wallpaperSrc : ''} />
 
       <Switch>
         <Route exact path="/" component={() => <Redirect to="/login" />} />
         <Route path={['/login', '/register']} component={Auth} />
         <NavigationBar />
       </Switch>
-    </Router>
+    </>
   )
 }
 

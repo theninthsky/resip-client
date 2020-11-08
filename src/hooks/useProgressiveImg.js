@@ -12,7 +12,7 @@ const useProgressiveImg = (lowQualitySrc, highQualitySrc) => {
     img.onload = () => setSrc(highQualitySrc)
   }, [lowQualitySrc, highQualitySrc])
 
-  return src
+  return [src, src === lowQualitySrc]
 }
 
 export default useProgressiveImg
