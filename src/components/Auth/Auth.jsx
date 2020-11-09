@@ -12,7 +12,6 @@ import {
   EMAIL,
   PASSWORD,
   PASSWORD_TOOLTIP,
-  CONFIRM_PASSWORD,
   ALREADY_A_MEMBER,
   NOT_A_MEMBER
 } from './constants'
@@ -26,14 +25,14 @@ const Spoons = styled.img`
   top: 50%;
   transform: translateY(-50%);
   width: 250px;
-  filter: ${({ isBlurred }) => (isBlurred ? 'blur(5px)' : 'none')};
+  filter: ${({ blurred }) => (blurred ? 'blur(5px)' : 'none')};
 `
 const Modal = styled.div`
   position: relative;
   width: 400px;
   max-width: 90%;
-  height: ${({ mode }) => (mode === LOGIN ? '360px' : '500px')};
-  margin: ${({ mode }) => `max(calc((100vh - ${mode === LOGIN ? '360px' : '500px'}) / 2), 25px) auto`};
+  height: ${({ mode }) => (mode === LOGIN ? '340px' : '440px')};
+  margin: ${({ mode }) => `max(calc((100vh - ${mode === LOGIN ? '340px' : '440px'}) / 2), 25px) auto`};
   box-sizing: border-box;
   overflow: auto;
   border: 1px solid lightgray;
@@ -52,7 +51,7 @@ const Form = styled.form`
   margin-top: 40px;
 `
 const FieldsWrap = styled.div`
-  height: ${({ mode }) => (mode === LOGIN ? '90px' : '250px')};
+  height: ${({ mode }) => (mode === LOGIN ? '90px' : '180px')};
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -139,31 +138,34 @@ const RegisterLink = styled.button`
 `
 
 const Auth = () => {
-  const [spoonsSrc, isBlurred] = useProgressiveImg(spoonsImgTiny, spoonsImg)
+  const [spoonsSrc, blurred] = useProgressiveImg(spoonsImgTiny, spoonsImg)
 
   const [mode, setMode] = useState(LOGIN) // Login | Register
   const [username, setUsername] = useState('')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [passwordsMatch, setPasswordsMatch] = useState(true)
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [mode])
 
-  const submitForm = e => {
+  const submitForm = async e => {
     e.preventDefault()
-    if (!passwordsMatch) return alert('Passwords do not match.')
-    if (mode === LOGIN) return firebase.auth().signInWithEmailAndPassword(email, password)
+    try {
+      if (mode === LOGIN) return await firebase.auth().signInWithEmailAndPassword(email, password)
 
-    console.log(username, name, email, password, confirmPassword)
+      const { user } = await firebase.auth().createUserWithEmailAndPassword(email, password)
+
+      user.sendEmailVerification()
+    } catch ({ message }) {
+      console.log(message)
+    }
   }
 
   return (
     <>
-      <Spoons isBlurred={isBlurred} src={spoonsSrc} />
+      <Spoons blurred={blurred} src={spoonsSrc} />
       <Modal mode={mode}>
         <Title>RESIP</Title>
 
@@ -221,26 +223,6 @@ const Auth = () => {
                 <FieldPlaceholder value={password}>{PASSWORD}</FieldPlaceholder>
               </FieldLabel>
             </Field>
-
-            <If condition={mode === REGISTER}>
-              <Field>
-                <FieldLabel>
-                  <FieldInput
-                    passwordsMatch={passwordsMatch}
-                    type="password"
-                    name="confirm-password"
-                    value={confirmPassword}
-                    required
-                    onChange={e => setConfirmPassword(e.target.value)}
-                    onFocus={() => setPasswordsMatch(true)}
-                    onBlur={() => setPasswordsMatch(confirmPassword ? password === confirmPassword : true)}
-                  />
-                  <FieldPlaceholder value={confirmPassword} passwordsMatch={passwordsMatch}>
-                    {CONFIRM_PASSWORD}
-                  </FieldPlaceholder>
-                </FieldLabel>
-              </Field>
-            </If>
           </FieldsWrap>
 
           <Submit mode={mode} type="submit" value={mode} />

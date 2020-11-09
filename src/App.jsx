@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { Switch } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
 import { useAuthState } from 'react-firebase-hooks/auth'
@@ -27,21 +26,17 @@ const GlobalStyle = createGlobalStyle`
 `
 
 const App = () => {
-  const [user] = useAuthState(firebase.auth())
-
-  useEffect(() => {
-    console.log(user)
-  })
+  const [user, loading] = useAuthState(firebase.auth())
 
   return (
     <>
       <GlobalStyle />
 
-      <If condition={!user}>
+      <If condition={!loading && !user}>
         <Auth />
       </If>
 
-      <If condition={user}>
+      <If condition={loading || user}>
         <NavigationBar />
 
         <Switch></Switch>
