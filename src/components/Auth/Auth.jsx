@@ -17,7 +17,7 @@ import {
   NOT_A_MEMBER
 } from './constants'
 
-import { BLACK_TEXT, DESKTOP } from '../../style'
+import { DESKTOP, BLACK_TEXT } from '../../style'
 import spoonsImg from '../../images/spoons.png'
 import spoonsImgTiny from '../../images/spoons-tiny.png'
 
@@ -156,7 +156,7 @@ const Auth = () => {
   const submitForm = e => {
     e.preventDefault()
     if (!passwordsMatch) return alert('Passwords do not match.')
-    if (mode === LOGIN) return firebase.auth().signInWithEmailAndPassword('test@test.com', '123456789')
+    if (mode === LOGIN) return firebase.auth().signInWithEmailAndPassword(email, password)
 
     console.log(username, name, email, password, confirmPassword)
   }

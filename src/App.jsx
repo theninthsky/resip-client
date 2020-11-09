@@ -37,11 +37,11 @@ const App = () => {
     <>
       <GlobalStyle />
 
-      <If condition={user}>
+      <If condition={!user}>
         <Auth />
       </If>
 
-      <If condition={!user}>
+      <If condition={user}>
         <NavigationBar />
 
         <Switch></Switch>
