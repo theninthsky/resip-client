@@ -1,11 +1,12 @@
 import { useEffect } from 'react'
-import { Switch, Route, Redirect } from 'react-router-dom'
+import { Switch } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
 import { useAuthState } from 'react-firebase-hooks/auth'
 
 import firebase from './firebase'
 import NavigationBar from './components/NavigationBar'
 import Auth from './components/Auth'
+import If from './components/If'
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -36,11 +37,15 @@ const App = () => {
     <>
       <GlobalStyle />
 
-      <Switch>
-        <Route exact path="/" component={() => <Redirect to="/login" />} />
-        <Route path={['/login', '/register']} component={Auth} />
+      <If condition={user}>
+        <Auth />
+      </If>
+
+      <If condition={!user}>
         <NavigationBar />
-      </Switch>
+
+        <Switch></Switch>
+      </If>
     </>
   )
 }
