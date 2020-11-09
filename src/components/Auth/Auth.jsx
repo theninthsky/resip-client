@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
+import firebase from '../../firebase'
 import If from '../If'
+import { useProgressiveImg } from '../../hooks'
 import {
   REGISTER,
   LOGIN,
@@ -24,7 +26,16 @@ import {
 } from './constants'
 
 import { MOBILE_LANDSCAPE, BLACK_TEXT, DESKTOP } from '../../style'
+import spoonsImg from '../../images/spoons.png'
+import spoonsImgTiny from '../../images/spoons-tiny.png'
 
+const Spoons = styled.img`
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 250px;
+  filter: ${({ isBlurred }) => (isBlurred ? 'blur(5px)' : 'none')};
+`
 const Modal = styled.div`
   position: relative;
   width: 400px;
@@ -33,7 +44,8 @@ const Modal = styled.div`
   margin: ${({ mode }) => `max(calc((100vh - ${mode === LOGIN ? '360px' : '560px'}) / 2), 25px) auto`};
   overflow: auto;
   border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 -0.5px 8px 0 rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(20px);
 `
 const Title = styled.h1`
@@ -157,6 +169,8 @@ const RegisterLink = styled(Link)`
 `
 
 const Auth = ({ history, location }) => {
+  const [spoonsSrc, isBlurred] = useProgressiveImg(spoonsImgTiny, spoonsImg)
+
   const [mode, setMode] = useState() // Login | Register
   const [username, setUsername] = useState('')
   const [name, setName] = useState('')
@@ -178,115 +192,120 @@ const Auth = ({ history, location }) => {
   const submitForm = e => {
     e.preventDefault()
     if (!passwordsMatch) return alert('Passwords do not match.')
+    if (mode === LOGIN) return firebase.auth().signInWithEmailAndPassword('test@test.com', '123456789')
+
     console.log(username, name, gender, birthDate, email, password, confirmPassword)
   }
 
   return (
-    <Modal mode={mode}>
-      <Title>{mode}</Title>
+    <>
+      <Spoons isBlurred={isBlurred} src={spoonsSrc} />
+      <Modal mode={mode}>
+        <Title>{mode}</Title>
 
-      <Form onSubmit={submitForm}>
-        <FieldsWrap mode={mode}>
-          <If condition={mode === REGISTER}>
+        <Form onSubmit={submitForm}>
+          <FieldsWrap mode={mode}>
+            <If condition={mode === REGISTER}>
+              <Field>
+                <FieldLabel>
+                  <FieldInput
+                    type="text"
+                    name="username"
+                    minLength="2"
+                    maxLength="32"
+                    required
+                    value={username}
+                    onChange={e => setUsername(e.target.value)}
+                  />
+                  <FieldPlaceholder value={username}>{USERNAME}</FieldPlaceholder>
+                </FieldLabel>
+              </Field>
+              <Field>
+                <FieldLabel>
+                  <FieldInput
+                    type="text"
+                    name="name"
+                    minLength="2"
+                    maxLength="64"
+                    required
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                  />
+                  <FieldPlaceholder value={name}>{NAME}</FieldPlaceholder>
+                </FieldLabel>
+              </Field>
+
+              <Dropdowns>
+                <Gender value={gender} required onChange={e => setGender(e.target.value)}>
+                  <option value="" disabled>
+                    {SELECT_GENDER}
+                  </option>
+                  <option value="male">{MALE}</option>
+                  <option value="female">{FEMALE}</option>
+                  <option value="not-specified">{NOT_SPECIFIED}</option>
+                </Gender>
+
+                <BirthDate
+                  type="date"
+                  max={new Date().toISOString().slice(0, 10)}
+                  value={birthDate}
+                  required
+                  onChange={e => setBirthDate(e.target.value)}
+                />
+              </Dropdowns>
+            </If>
+
             <Field>
               <FieldLabel>
-                <FieldInput
-                  type="text"
-                  name="username"
-                  minLength="2"
-                  maxLength="32"
-                  required
-                  value={username}
-                  onChange={e => setUsername(e.target.value)}
-                />
-                <FieldPlaceholder value={username}>{USERNAME}</FieldPlaceholder>
+                <FieldInput type="email" name="email" required value={email} onChange={e => setEmail(e.target.value)} />
+                <FieldPlaceholder value={email}>{EMAIL}</FieldPlaceholder>
               </FieldLabel>
             </Field>
             <Field>
               <FieldLabel>
                 <FieldInput
-                  type="text"
-                  name="name"
-                  minLength="2"
-                  maxLength="64"
-                  required
-                  value={name}
-                  onChange={e => setName(e.target.value)}
-                />
-                <FieldPlaceholder value={name}>{NAME}</FieldPlaceholder>
-              </FieldLabel>
-            </Field>
-
-            <Dropdowns>
-              <Gender value={gender} required onChange={e => setGender(e.target.value)}>
-                <option value="" disabled>
-                  {SELECT_GENDER}
-                </option>
-                <option value="male">{MALE}</option>
-                <option value="female">{FEMALE}</option>
-                <option value="not-specified">{NOT_SPECIFIED}</option>
-              </Gender>
-
-              <BirthDate
-                type="date"
-                max={new Date().toISOString().slice(0, 10)}
-                value={birthDate}
-                required
-                onChange={e => setBirthDate(e.target.value)}
-              />
-            </Dropdowns>
-          </If>
-
-          <Field>
-            <FieldLabel>
-              <FieldInput type="email" name="email" required value={email} onChange={e => setEmail(e.target.value)} />
-              <FieldPlaceholder value={email}>{EMAIL}</FieldPlaceholder>
-            </FieldLabel>
-          </Field>
-          <Field>
-            <FieldLabel>
-              <FieldInput
-                type="password"
-                name="password"
-                minLength="8"
-                maxLength="512"
-                title={PASSWORD_TOOLTIP}
-                value={password}
-                required
-                onChange={e => setPassword(e.target.value)}
-              />
-              <FieldPlaceholder value={password}>{PASSWORD}</FieldPlaceholder>
-            </FieldLabel>
-          </Field>
-
-          <If condition={mode === REGISTER}>
-            <Field>
-              <FieldLabel>
-                <FieldInput
-                  passwordsMatch={passwordsMatch}
                   type="password"
-                  name="confirm-password"
-                  value={confirmPassword}
+                  name="password"
+                  minLength="8"
+                  maxLength="512"
+                  title={PASSWORD_TOOLTIP}
+                  value={password}
                   required
-                  onChange={e => setConfirmPassword(e.target.value)}
-                  onFocus={() => setPasswordsMatch(true)}
-                  onBlur={() => setPasswordsMatch(password === confirmPassword)}
+                  onChange={e => setPassword(e.target.value)}
                 />
-                <FieldPlaceholder value={confirmPassword} passwordsMatch={passwordsMatch}>
-                  {CONFIRM_PASSWORD}
-                </FieldPlaceholder>
+                <FieldPlaceholder value={password}>{PASSWORD}</FieldPlaceholder>
               </FieldLabel>
             </Field>
-          </If>
-        </FieldsWrap>
 
-        <Submit mode={mode} type="submit" value={SUBMIT} />
-      </Form>
+            <If condition={mode === REGISTER}>
+              <Field>
+                <FieldLabel>
+                  <FieldInput
+                    passwordsMatch={passwordsMatch}
+                    type="password"
+                    name="confirm-password"
+                    value={confirmPassword}
+                    required
+                    onChange={e => setConfirmPassword(e.target.value)}
+                    onFocus={() => setPasswordsMatch(true)}
+                    onBlur={() => setPasswordsMatch(password === confirmPassword)}
+                  />
+                  <FieldPlaceholder value={confirmPassword} passwordsMatch={passwordsMatch}>
+                    {CONFIRM_PASSWORD}
+                  </FieldPlaceholder>
+                </FieldLabel>
+              </Field>
+            </If>
+          </FieldsWrap>
 
-      <RegisterLink to={mode === LOGIN ? '/register' : '/login'}>
-        {mode === LOGIN ? NOT_A_MEMBER : ALREADY_A_MEMBER}
-      </RegisterLink>
-    </Modal>
+          <Submit mode={mode} type="submit" value={SUBMIT} />
+        </Form>
+
+        <RegisterLink to={mode === LOGIN ? '/register' : '/login'}>
+          {mode === LOGIN ? NOT_A_MEMBER : ALREADY_A_MEMBER}
+        </RegisterLink>
+      </Modal>
+    </>
   )
 }
 

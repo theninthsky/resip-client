@@ -1,12 +1,11 @@
-import { Switch, Route, Redirect, useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Switch, Route, Redirect } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
+import { useAuthState } from 'react-firebase-hooks/auth'
 
+import firebase from './firebase'
 import NavigationBar from './components/NavigationBar'
 import Auth from './components/Auth'
-import { useProgressiveImg } from './hooks'
-
-import wallpaperLQ from './images/wallpaper-lq.jpg'
-import wallpaperHQ from './images/wallpaper-hq.jpg'
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -15,8 +14,6 @@ const GlobalStyle = createGlobalStyle`
 
   body {
     margin: 0;
-    background: ${({ wallpaperSrc }) => `url(${wallpaperSrc}) no-repeat fixed`};
-    background-size: cover;
   }
 
   img {
@@ -29,12 +26,15 @@ const GlobalStyle = createGlobalStyle`
 `
 
 const App = () => {
-  const { pathname } = useLocation()
-  const [wallpaperSrc] = useProgressiveImg(wallpaperLQ, wallpaperHQ)
+  const [user] = useAuthState(firebase.auth())
+
+  useEffect(() => {
+    console.log(user)
+  })
 
   return (
     <>
-      <GlobalStyle wallpaperSrc={pathname === '/login' || pathname === '/register' ? wallpaperSrc : ''} />
+      <GlobalStyle />
 
       <Switch>
         <Route exact path="/" component={() => <Redirect to="/login" />} />
