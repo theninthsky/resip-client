@@ -3,6 +3,7 @@ import styled from 'styled-components'
 
 import firebase from '../../firebase'
 import If from '../If'
+import Media from '../Media'
 import { useProgressiveImg } from '../../hooks'
 import {
   REGISTER,
@@ -16,7 +17,7 @@ import {
   NOT_A_MEMBER
 } from './constants'
 
-import { DESKTOP, BLACK_TEXT } from '../../style'
+import { VIEWPORT_4, VIEWPORT_7, VIEWPORT_12, BLACK_TEXT } from '../../style'
 import spoonsImg from '../../images/spoons.png'
 import spoonsImgTiny from '../../images/spoons-tiny.png'
 
@@ -29,45 +30,55 @@ const Spoons = styled.img`
 `
 const Modal = styled.div`
   position: relative;
-  width: 400px;
+  width: 300px;
   max-width: 90%;
-  height: ${({ mode }) => (mode === LOGIN ? '340px' : '440px')};
-  margin: ${({ mode }) => `max(calc((100vh - ${mode === LOGIN ? '340px' : '440px'}) / 2), 25px) auto`};
+  height: ${({ mode }) => (mode === LOGIN ? '300px' : '400px')};
+  margin: ${({ mode }) => `max(calc((100vh - ${mode === LOGIN ? '300px' : '400px'}) / 2), 25px) auto`};
   box-sizing: border-box;
   overflow: auto;
-  border: 1px solid lightgray;
-  border-radius: 1px;
   background-color: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(20px);
+
+  @media ${VIEWPORT_4} {
+    border: 1px solid lightgray;
+    border-radius: 1px;
+  }
 `
 const Title = styled.h1`
   margin-top: 25px;
   text-align: center;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
   font-size: 32px;
   font-weight: normal;
   color: ${BLACK_TEXT};
 `
 const Form = styled.form`
-  margin-top: 40px;
+  margin-top: 30px;
+  padding: 0 30px;
 `
 const FieldsWrap = styled.div`
-  height: ${({ mode }) => (mode === LOGIN ? '90px' : '180px')};
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: space-between;
 `
 const Field = styled.div`
   position: relative;
   display: flex;
   justify-content: center;
+  width: 100%;
+  margin: 5px 0;
 `
 const FieldLabel = styled.label`
   position: relative;
+  width: 100%;
 `
 const FieldInput = styled.input`
   position: relative;
+  width: 100%;
   margin: 0 auto;
-  padding: 10px 15px;
+  padding: 10px;
+  box-sizing: border-box;
   border: ${({ passwordsMatch = true }) => `1px solid ${passwordsMatch ? 'lightgray' : 'red'}`};
   border-radius: 2px;
   box-shadow: none;
@@ -95,24 +106,27 @@ const FieldPlaceholder = styled.span`
   left: ${({ value }) => (value ? '8px' : '12px')};
   padding: 0 2.5px;
   font-size: ${({ value }) => (value ? '14px' : 'auto')};
-  color: ${({ value, passwordsMatch = true }) => (value ? (passwordsMatch ? BLACK_TEXT : 'red') : '#a9a9a9')};
+  color: ${({ value }) => (value ? BLACK_TEXT : '#a9a9a9')};
   background-color: ${({ value }) => (value ? 'white' : 'auto')};
   transition: ease-in-out 0.2s all;
 `
 const Submit = styled.input`
   display: block;
+  width: 100%;
   margin: 0 auto;
-  margin-top: 40px;
+  margin-top: 10px;
   padding: 5px 7.5px;
-  border: 1px solid ${BLACK_TEXT};
+  border: none;
   border-radius: 4px;
   outline: none;
-  font-size: 16px;
-  color: ${BLACK_TEXT};
-  background-color: rgba(255, 255, 255, 0.25);
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  background-color: rgb(0, 149, 246);
   cursor: pointer;
+  opacity: ${({ submitting }) => (submitting ? '0.25' : '')};
 
-  @media ${DESKTOP} {
+  @media ${VIEWPORT_12} {
     &:hover {
       opacity: 0.75;
     }
@@ -130,7 +144,7 @@ const RegisterLink = styled.button`
   background-color: transparent;
   cursor: pointer;
 
-  @media ${DESKTOP} {
+  @media ${VIEWPORT_12} {
     &:hover {
       opacity: 0.75;
     }
@@ -145,13 +159,16 @@ const Auth = () => {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [mode])
 
-  const submitForm = async e => {
-    e.preventDefault()
+  const submitForm = async event => {
+    event.preventDefault()
+    setSubmitting(true)
+
     try {
       if (mode === LOGIN) return await firebase.auth().signInWithEmailAndPassword(email, password)
 
@@ -161,11 +178,16 @@ const Auth = () => {
     } catch ({ message }) {
       console.log(message)
     }
+
+    setSubmitting(false)
   }
 
   return (
     <>
-      <Spoons blurred={blurred} src={spoonsSrc} />
+      <Media query={VIEWPORT_7}>
+        <Spoons blurred={blurred} src={spoonsSrc} />
+      </Media>
+
       <Modal mode={mode}>
         <Title>RESIP</Title>
 
@@ -225,7 +247,7 @@ const Auth = () => {
             </Field>
           </FieldsWrap>
 
-          <Submit mode={mode} type="submit" value={mode} />
+          <Submit mode={mode} submitting={submitting} type="submit" value={mode} disabled={submitting} />
         </Form>
 
         <RegisterLink onClick={() => setMode(mode === LOGIN ? REGISTER : LOGIN)}>
