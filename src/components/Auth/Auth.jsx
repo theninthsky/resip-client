@@ -6,13 +6,15 @@ import If from '../If'
 import Media from '../Media'
 import { useProgressiveImg } from '../../hooks'
 import {
-  REGISTER,
+  SIGNUP,
   LOGIN,
   USERNAME,
   NAME,
   EMAIL,
   PASSWORD,
   PASSWORD_TOOLTIP,
+  FORGOT_PASSWORD,
+  RESET_PASSWORD,
   ALREADY_A_MEMBER,
   NOT_A_MEMBER
 } from './constants'
@@ -32,8 +34,8 @@ const Modal = styled.div`
   position: relative;
   width: 300px;
   max-width: 90%;
-  height: ${({ mode }) => (mode === LOGIN ? '300px' : '400px')};
-  margin: ${({ mode }) => `max(calc((100vh - ${mode === LOGIN ? '300px' : '400px'}) / 2), 25px) auto`};
+  height: ${({ mode }) => (mode === SIGNUP ? '400px' : '300px')};
+  margin: ${({ mode }) => `max(calc((100vh - ${mode === SIGNUP ? '400px' : '300px'}) / 2), 25px) auto`};
   box-sizing: border-box;
   overflow: auto;
   background-color: rgba(255, 255, 255, 0.5);
@@ -110,6 +112,19 @@ const FieldPlaceholder = styled.span`
   background-color: ${({ value }) => (value ? 'white' : 'auto')};
   transition: ease-in-out 0.2s all;
 `
+const ForgotPassword = styled.div`
+  align-self: flex-end;
+  font-size: 14px;
+  color: dodgerblue;
+  cursor: pointer;
+  user-select: none;
+
+  @media ${VIEWPORT_12} {
+    &:hover {
+      opacity: 0.75;
+    }
+  }
+`
 const Submit = styled.input`
   display: block;
   width: 100%;
@@ -132,16 +147,11 @@ const Submit = styled.input`
     }
   }
 `
-const RegisterLink = styled.button`
+const SignupLink = styled.div`
   position: absolute;
   bottom: 15px;
   right: 20px;
-  border: none;
-  outline: none;
-  font-family: inherit;
-  font-size: 16px;
   color: ${BLACK_TEXT};
-  background-color: transparent;
   cursor: pointer;
 
   @media ${VIEWPORT_12} {
@@ -154,7 +164,7 @@ const RegisterLink = styled.button`
 const Auth = () => {
   const [spoonsSrc, blurred] = useProgressiveImg(spoonsImgTiny, spoonsImg)
 
-  const [mode, setMode] = useState(LOGIN) // Login | Register
+  const [mode, setMode] = useState(LOGIN)
   const [username, setUsername] = useState('')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -172,9 +182,15 @@ const Auth = () => {
     try {
       if (mode === LOGIN) return await firebase.auth().signInWithEmailAndPassword(email, password)
 
-      const { user } = await firebase.auth().createUserWithEmailAndPassword(email, password)
+      if (mode === SIGNUP) {
+        const { user } = await firebase.auth().createUserWithEmailAndPassword(email, password)
 
-      user.sendEmailVerification()
+        return user.sendEmailVerification()
+      }
+
+      await firebase.auth().sendPasswordResetEmail(email)
+
+      alert('Check your inbox for the password reset link')
     } catch ({ message }) {
       console.log(message)
     }
@@ -193,7 +209,7 @@ const Auth = () => {
 
         <Form onSubmit={submitForm}>
           <FieldsWrap mode={mode}>
-            <If condition={mode === REGISTER}>
+            <If condition={mode === SIGNUP}>
               <Field>
                 <FieldLabel>
                   <FieldInput
@@ -208,6 +224,7 @@ const Auth = () => {
                   <FieldPlaceholder value={username}>{USERNAME}</FieldPlaceholder>
                 </FieldLabel>
               </Field>
+
               <Field>
                 <FieldLabel>
                   <FieldInput
@@ -230,29 +247,36 @@ const Auth = () => {
                 <FieldPlaceholder value={email}>{EMAIL}</FieldPlaceholder>
               </FieldLabel>
             </Field>
-            <Field>
-              <FieldLabel>
-                <FieldInput
-                  type="password"
-                  name="password"
-                  minLength="8"
-                  maxLength="512"
-                  title={PASSWORD_TOOLTIP}
-                  value={password}
-                  required
-                  onChange={e => setPassword(e.target.value)}
-                />
-                <FieldPlaceholder value={password}>{PASSWORD}</FieldPlaceholder>
-              </FieldLabel>
-            </Field>
+
+            <If condition={mode !== RESET_PASSWORD}>
+              <Field>
+                <FieldLabel>
+                  <FieldInput
+                    type="password"
+                    name="password"
+                    minLength="8"
+                    maxLength="512"
+                    title={PASSWORD_TOOLTIP}
+                    value={password}
+                    required
+                    onChange={e => setPassword(e.target.value)}
+                  />
+                  <FieldPlaceholder value={password}>{PASSWORD}</FieldPlaceholder>
+                </FieldLabel>
+              </Field>
+            </If>
+
+            <If condition={mode === LOGIN}>
+              <ForgotPassword onClick={() => setMode(RESET_PASSWORD)}>{FORGOT_PASSWORD}</ForgotPassword>
+            </If>
           </FieldsWrap>
 
           <Submit mode={mode} submitting={submitting} type="submit" value={mode} disabled={submitting} />
         </Form>
 
-        <RegisterLink onClick={() => setMode(mode === LOGIN ? REGISTER : LOGIN)}>
+        <SignupLink onClick={() => setMode(mode === LOGIN ? SIGNUP : LOGIN)}>
           {mode === LOGIN ? NOT_A_MEMBER : ALREADY_A_MEMBER}
-        </RegisterLink>
+        </SignupLink>
       </Modal>
     </>
   )
