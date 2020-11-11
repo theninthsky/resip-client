@@ -18,8 +18,8 @@ import {
   ALREADY_A_MEMBER,
   NOT_A_MEMBER
 } from './constants'
-
 import { VIEWPORT_4, VIEWPORT_7, VIEWPORT_12, BLACK_TEXT } from '../../style'
+
 import spoonsImg from '../../images/spoons.png'
 import spoonsImgTiny from '../../images/spoons-tiny.png'
 
@@ -219,7 +219,7 @@ const Auth = () => {
                     maxLength="32"
                     required
                     value={username}
-                    onChange={e => setUsername(e.target.value)}
+                    onChange={event => setUsername(event.target.value)}
                   />
                   <FieldPlaceholder value={username}>{USERNAME}</FieldPlaceholder>
                 </FieldLabel>
@@ -234,7 +234,7 @@ const Auth = () => {
                     maxLength="64"
                     required
                     value={name}
-                    onChange={e => setName(e.target.value)}
+                    onChange={event => setName(event.target.value)}
                   />
                   <FieldPlaceholder value={name}>{NAME}</FieldPlaceholder>
                 </FieldLabel>
@@ -243,7 +243,13 @@ const Auth = () => {
 
             <Field>
               <FieldLabel>
-                <FieldInput type="email" name="email" required value={email} onChange={e => setEmail(e.target.value)} />
+                <FieldInput
+                  type="email"
+                  name="email"
+                  required
+                  value={email}
+                  onChange={event => setEmail(event.target.value)}
+                />
                 <FieldPlaceholder value={email}>{EMAIL}</FieldPlaceholder>
               </FieldLabel>
             </Field>
@@ -259,7 +265,7 @@ const Auth = () => {
                     title={PASSWORD_TOOLTIP}
                     value={password}
                     required
-                    onChange={e => setPassword(e.target.value)}
+                    onChange={event => setPassword(event.target.value)}
                   />
                   <FieldPlaceholder value={password}>{PASSWORD}</FieldPlaceholder>
                 </FieldLabel>

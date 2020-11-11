@@ -14,9 +14,7 @@ const Media = ({ query, children: component }) => {
 
     window.addEventListener('resize', handleResize)
 
-    return () => {
-      window.removeEventListener('resize', handleResize)
-    }
+    return () => window.removeEventListener('resize', handleResize)
   }, [query])
 
   return matches ? component : null

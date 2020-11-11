@@ -1,11 +1,11 @@
-import { Switch } from 'react-router-dom'
+import { BrowserRouter as Router, Switch } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
 import { useAuthState } from 'react-firebase-hooks/auth'
 
-import firebase from './firebase'
-import NavigationBar from './components/NavigationBar'
-import Auth from './components/Auth'
-import If from './components/If'
+import firebase from '../../firebase'
+import Auth from '../Auth'
+import NavigationBar from '../NavigationBar'
+import If from '../If'
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -29,7 +29,7 @@ const App = () => {
   const [user, loading] = useAuthState(firebase.auth())
 
   return (
-    <>
+    <Router>
       <GlobalStyle />
 
       <If condition={!loading && !user}>
@@ -41,7 +41,7 @@ const App = () => {
 
         <Switch></Switch>
       </If>
-    </>
+    </Router>
   )
 }
 
