@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 
 import firebase from '../../firebase'
@@ -16,12 +17,19 @@ import {
   FORGOT_PASSWORD,
   RESET_PASSWORD,
   ALREADY_A_MEMBER,
-  NOT_A_MEMBER
+  NOT_A_MEMBER,
+  BACK_TO_LOGIN
 } from './constants'
 import { VIEWPORT_4, VIEWPORT_7, VIEWPORT_12, BLACK_TEXT } from '../../style'
 
 import spoonsImg from '../../images/spoons.png'
 import spoonsImgTiny from '../../images/spoons-tiny.png'
+
+const modeToPathname = {
+  '/signup': SIGNUP,
+  '/login': LOGIN,
+  '/reset-password': RESET_PASSWORD
+}
 
 const Spoons = styled.img`
   position: fixed;
@@ -112,9 +120,10 @@ const FieldPlaceholder = styled.span`
   background-color: ${({ value }) => (value ? 'white' : 'auto')};
   transition: ease-in-out 0.2s all;
 `
-const ForgotPassword = styled.div`
+const ForgotPassword = styled(Link)`
   align-self: flex-end;
   font-size: 14px;
+  text-decoration: none;
   color: dodgerblue;
   cursor: pointer;
   user-select: none;
@@ -143,14 +152,15 @@ const Submit = styled.input`
 
   @media ${VIEWPORT_12} {
     &:hover {
-      opacity: 0.75;
+      opacity: ${({ submitting }) => (submitting ? '0.25' : '0.75')};
     }
   }
 `
-const SignupLink = styled.div`
+const SignupLink = styled(Link)`
   position: absolute;
-  bottom: 15px;
-  right: 20px;
+  bottom: 10px;
+  right: 15px;
+  text-decoration: none;
   color: ${BLACK_TEXT};
   cursor: pointer;
 
@@ -162,9 +172,9 @@ const SignupLink = styled.div`
 `
 
 const Auth = () => {
+  const { pathname } = useLocation()
   const [spoonsSrc, blurred] = useProgressiveImg(spoonsImgTiny, spoonsImg)
 
-  const [mode, setMode] = useState(LOGIN)
   const [username, setUsername] = useState('')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -173,7 +183,9 @@ const Auth = () => {
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
-  }, [mode])
+  }, [pathname])
+
+  const mode = modeToPathname[pathname]
 
   const submitForm = async event => {
     event.preventDefault()
@@ -273,15 +285,15 @@ const Auth = () => {
             </If>
 
             <If condition={mode === LOGIN}>
-              <ForgotPassword onClick={() => setMode(RESET_PASSWORD)}>{FORGOT_PASSWORD}</ForgotPassword>
+              <ForgotPassword to="/reset-password">{FORGOT_PASSWORD}</ForgotPassword>
             </If>
           </FieldsWrap>
 
           <Submit mode={mode} submitting={submitting} type="submit" value={mode} disabled={submitting} />
         </Form>
 
-        <SignupLink onClick={() => setMode(mode === LOGIN ? SIGNUP : LOGIN)}>
-          {mode === LOGIN ? NOT_A_MEMBER : ALREADY_A_MEMBER}
+        <SignupLink to={mode === LOGIN ? '/signup' : '/login'}>
+          {mode === LOGIN ? NOT_A_MEMBER : mode === SIGNUP ? ALREADY_A_MEMBER : BACK_TO_LOGIN}
         </SignupLink>
       </Modal>
     </>

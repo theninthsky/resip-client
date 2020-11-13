@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Switch } from 'react-router-dom'
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
 import { useAuthState } from 'react-firebase-hooks/auth'
 
@@ -32,14 +32,26 @@ const App = () => {
     <Router>
       <GlobalStyle />
 
-      <If condition={!loading && !user}>
-        <Auth />
-      </If>
+      <If condition={!loading}>
+        <Switch>
+          <Route path={['/signup', '/login', '/reset-password']}>
+            <If condition={!user}>
+              <Auth />
+            </If>
+            <If condition={user}>
+              <Redirect to="/" />
+            </If>
+          </Route>
 
-      <If condition={loading || user}>
-        <NavigationBar />
-
-        <Switch></Switch>
+          <Route path="/">
+            <If condition={user}>
+              <NavigationBar />
+            </If>
+            <If condition={!user}>
+              <Redirect to="/login" />
+            </If>
+          </Route>
+        </Switch>
       </If>
     </Router>
   )
