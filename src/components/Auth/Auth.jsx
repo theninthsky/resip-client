@@ -193,7 +193,6 @@ const Auth = () => {
 
     try {
       if (mode === LOGIN) return await firebase.auth().signInWithEmailAndPassword(email, password)
-
       if (mode === SIGNUP) {
         const { user } = await firebase.auth().createUserWithEmailAndPassword(email, password)
 

@@ -34,23 +34,8 @@ const App = () => {
 
       <If condition={!loading}>
         <Switch>
-          <Route path={['/signup', '/login', '/reset-password']}>
-            <If condition={!user}>
-              <Auth />
-            </If>
-            <If condition={user}>
-              <Redirect to="/" />
-            </If>
-          </Route>
-
-          <Route path="/">
-            <If condition={user}>
-              <NavigationBar />
-            </If>
-            <If condition={!user}>
-              <Redirect to="/login" />
-            </If>
-          </Route>
+          <Route path={['/signup', '/login', '/reset-password']}>{user ? <Redirect to="/" /> : <Auth />}</Route>
+          <Route path="/">{user ? <NavigationBar /> : <Redirect to="/login" />}</Route>
         </Switch>
       </If>
     </Router>
